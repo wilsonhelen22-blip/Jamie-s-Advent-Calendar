@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Jamie's Advent Calendar</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+}
+
+/* Background Photo */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.55),
+            rgba(0,0,0,.55)
+        ),
+        url("background.jpg");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    z-index:-2;
+}
+
+.container{
+
+    min-height:100vh;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:flex-start;
+
+    padding:10px;
+}
+h1{
+    color:white;
+
+    margin-bottom:10px;
+
+    font-size:clamp(1.8rem,4vw,3.5rem);
+
+    text-shadow:
+        0 0 10px black,
+        0 0 20px black;
+}
+
+.day-counter{
+    color:white;
+
+    margin-bottom:10px;
+
+    font-size:clamp(16px,2vw,22px);
+
+    text-shadow:
+        0 0 10px black;
+}
+
+/* Tree Area */
+
+.tree-container{
+
+    position:relative;
+
+    width:min(98vw,900px);
+
+    height:calc(100vh - 80px);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.tree{
+
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+
+    pointer-events:none;
+}
+
+/* Door Numbers */
+
+.door{
+
+    position:absolute;
+
+    background:none;
+    border:none;
+
+    color:white;
+
+    font-weight:900;
+
+    font-size:clamp(22px,2vw,34px);
+
+    cursor:pointer;
+
+    text-shadow:
+        0 0 5px black,
+        0 0 10px black,
+        0 0 20px black,
+        2px 2px 4px black;
+
+    transition:.2s;
+}
+
+.door:hover{
+
+    transform:translate(-50%,-50%) scale(1.15);
+
+}
+
+.door:hover{
+
+    opacity:1;
+
+    transform:translate(-50%,-50%) scale(1.03);
+
+}
+.opened{
+
+    color:#ffd700;
+
+    text-shadow:
+        0 0 8px gold,
+        0 0 20px gold,
+        0 0 40px gold;
+
+}
+
+/* Door Positions */
+
+.d1  {top:12%; left:50%; transform:translate(-50%,-50%);}
+
+.d2  {top:23%; left:43%; transform:translate(-50%,-50%);}
+.d3  {top:23%; left:58%; transform:translate(-50%,-50%);}
+
+.d4  {top:35%; left:33%; transform:translate(-50%,-50%);}
+.d5  {top:35%; left:50%; transform:translate(-50%,-50%);}
+.d6  {top:35%; left:67%; transform:translate(-50%,-50%);}
+
+.d7  {top:48%; left:25%; transform:translate(-50%,-50%);}
+.d8  {top:48%; left:42%; transform:translate(-50%,-50%);}
+.d9  {top:48%; left:59%; transform:translate(-50%,-50%);}
+.d10 {top:48%; left:75%; transform:translate(-50%,-50%);}
+
+.d11 {top:63%; left:20%; transform:translate(-50%,-50%);}
+.d12 {top:63%; left:35%; transform:translate(-50%,-50%);}
+.d13 {top:63%; left:50%; transform:translate(-50%,-50%);}
+.d14 {top:63%; left:65%; transform:translate(-50%,-50%);}
+.d15 {top:63%; left:80%; transform:translate(-50%,-50%);}
+
+.d16 {top:80%; left:15%; transform:translate(-50%,-50%);}
+.d17 {top:80%; left:31%; transform:translate(-50%,-50%);}
+.d18 {top:80%; left:44%; transform:translate(-50%,-50%);}
+.d19 {top:80%; left:57%; transform:translate(-50%,-50%);}
+.d20 {top:80%; left:70%; transform:translate(-50%,-50%);}
+.d21 {top:80%; left:85%; transform:translate(-50%,-50%);}
+
+.d22 {top:95%; left:35%; transform:translate(-50%,-50%);}
+.d23 {top:95%; left:50%; transform:translate(-50%,-50%);}
+.d24 {top:95%; left:65%; transform:translate(-50%,-50%);}
+.d25 {top:95%; left:80%; transform:translate(-50%,-50%);}
+
+/* Popup */
+
+.popup{
+
+    position:fixed;
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.75);
+
+    z-index:1000;
+}
+
+.popup-box{
+
+    background:white;
+
+    color:black;
+
+    width:min(90vw,700px);
+
+    padding:30px;
+
+    border-radius:18px;
+
+    animation:pop .4s;
+}
+
+#message{
+
+    font-size:46px;
+
+    margin:30px 0;
+}
+
+@keyframes pop{
+
+    from{
+        transform:scale(.7);
+    }
+
+    to{
+        transform:scale(1);
+    }
+
+}
+
+#message{
+
+    margin:25px 0;
+
+    font-size:clamp(28px,5vw,54px);
+}
+
+.close-btn{
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+/* Realistic Snow */
+
+.snowflake{
+
+    position:fixed;
+
+    top:-20px;
+
+    color:white;
+
+    pointer-events:none;
+
+    z-index:900;
+
+    user-select:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>☃️ Jamie's Advent Calendar ☃️</h1>
+
+    <div class="day-counter">
+        Day <span id="dayDisplay"></span> of 24
+    </div>
+
+    <div class="tree-container">
+
+        <img src="tree.png" class="tree">
+
+        <button class="door d1" data-day="1">1</button>
+        <button class="door d2" data-day="2">2</button>
+        <button class="door d3" data-day="3">3</button>
+
+        <button class="door d4" data-day="4">4</button>
+        <button class="door d5" data-day="5">5</button>
+        <button class="door d6" data-day="6">6</button>
+
+        <button class="door d7" data-day="7">7</button>
+        <button class="door d8" data-day="8">8</button>
+        <button class="door d9" data-day="9">9</button>
+        <button class="door d10" data-day="10">10</button>
+
+        <button class="door d11" data-day="11">11</button>
+        <button class="door d12" data-day="12">12</button>
+        <button class="door d13" data-day="13">13</button>
+        <button class="door d14" data-day="14">14</button>
+        <button class="door d15" data-day="15">15</button>
+
+        <button class="door d16" data-day="16">16</button>
+        <button class="door d17" data-day="17">17</button>
+        <button class="door d18" data-day="18">18</button>
+        <button class="door d19" data-day="19">19</button>
+        <button class="door d20" data-day="20">20</button>
+        <button class="door d21" data-day="21">21</button>
+
+        <button class="door d22" data-day="22">22</button>
+        <button class="door d23" data-day="23">23</button>
+        <button class="door d24" data-day="24">24</button>
+	<button class="door d25" data-day="25">25</button>
+
+    </div>
+
+</div>
+
+<div class="popup" id="popup">
+
+    <div class="popup-box">
+
+        <h2>Your Surprise!</h2>
+
+        <div id="message"></div>
+
+        <button class="close-btn"
+        onclick="closePopup()">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const surprises = [];
+
+for(let i=1;i<=24;i++){
+    surprises.push(`Surprise No. ${i}`);
+}
+
+const fonts = [
+"BankGothic Lt BT",
+"Baguet Script",
+"Viner Hand ITC",
+"The Serif Hand",
+"Swis721 BlkOul BT",
+"Stencil",
+"Sitka Banner",
+"Segoe MDL2 Assets",
+"Ravie",
+"Castellar",
+"Gigi"
+];
+
+const colours = [
+"red",
+"green",
+"blue",
+"hotpink"
+];
+
+document.getElementById("dayDisplay").textContent =
+Math.min(new Date().getDate(),25);
+
+let available =
+JSON.parse(
+localStorage.getItem("available")
+) || [...surprises];
+
+let savedDoors =
+JSON.parse(
+localStorage.getItem("savedDoors")
+) || {};
+
+const today =
+Math.min(
+new Date().getDate(),
+24
+);
+
+document.querySelectorAll(".door")
+.forEach(button=>{
+
+    const day =
+    Number(button.dataset.day);
+
+    if(savedDoors[day]){
+
+        button.classList.add("opened");
+
+    }
+
+    button.addEventListener("click",()=>{
+
+        if(day !== today){
+
+            alert(
+            "You can only open today's door."
+            );
+
+            return;
+
+        }
+
+        let result;
+
+        if(savedDoors[day]){
+
+            result = savedDoors[day];
+
+        }else{
+
+            let surprise;
+
+            if(day === 25){
+
+                surprise =
+                "Merry Christmas Jamie ❤️";
+
+            }else{
+
+                const index =
+                Math.floor(
+                Math.random()*available.length
+                );
+
+                surprise =
+                available[index];
+
+                available.splice(index,1);
+
+                localStorage.setItem(
+                "available",
+                JSON.stringify(available)
+                );
+            }
+
+            result = {
+
+                surprise,
+
+                font:
+                fonts[
+                Math.floor(
+                Math.random()*fonts.length
+                )
+                ],
+
+                colour:
+                colours[
+                Math.floor(
+                Math.random()*colours.length
+                )
+                ]
+
+            };
+
+            savedDoors[day] = result;
+
+            localStorage.setItem(
+            "savedDoors",
+            JSON.stringify(savedDoors)
+            );
+
+        }
+
+        const message =
+        document.getElementById("message");
+
+        message.textContent =
+        result.surprise;
+
+        message.style.fontFamily =
+        result.font;
+
+        message.style.color =
+        result.colour;
+
+        document
+        .getElementById("popup")
+        .style.display = "flex";
+
+    });
+
+});
+
+function closePopup(){
+
+    document
+    .getElementById("popup")
+    .style.display = "none";
+
+}
+
+/* Realistic Snow */
+
+const snowSymbols = [
+"❄",
+"❅",
+"❆",
+"✻",
+"✼",
+"❉"
+];
+
+
+for(let i=0;i<220;i++){
+
+    const snow =
+    document.createElement("div");
+
+    snow.className =
+    "snowflake";
+
+    snow.innerHTML =
+    snowSymbols[
+    Math.floor(Math.random()*3)
+    ];
+
+    snow.style.left =
+    Math.random()*100 + "vw";
+
+    snow.style.fontSize =
+    (Math.random()*18+4) + "px";
+
+    snow.style.opacity =
+    Math.random();
+
+    const duration =
+    Math.random()*15+8;
+
+    document.body.appendChild(snow);
+
+    snow.animate([
+        {
+            transform:
+            `translate(0,-10vh)`
+        },
+        {
+            transform:
+            `translate(${Math.random()*200-100}px,110vh)`
+        }
+    ],{
+        duration:
+        duration*1000,
+
+        iterations:
+        Infinity,
+
+        delay:
+        Math.random()*-20000
+    });
+}
+
+</script>
+
+</body>
+</html>
